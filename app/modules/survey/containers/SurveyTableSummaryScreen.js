@@ -30,7 +30,7 @@ class SurveyTableSummaryScreen extends Component {
     } else {
       const {questions, answers} = this.props.survey
       const question = questions[row.secId]
-      if(answer === undefined) {
+      if(answer === undefined || answer == null) {
         return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body></Body></ListItem>)
       }
       switch(question.type)
@@ -46,7 +46,7 @@ class SurveyTableSummaryScreen extends Component {
         case 'text':
           return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{answer.map((text, index) => `${question.cols[index].text}(${text})`).join(", ")}</Text></Body></ListItem>)
         default:
-          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{answer}</Text></Body></ListItem>)
+          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{answer.join(", ")}</Text></Body></ListItem>)
       }
         
     }

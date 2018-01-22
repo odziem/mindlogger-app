@@ -263,7 +263,7 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = state => ({
   surveys: state.survey.surveys,
   themeState: state.drawer.themeState,
-  user: state.core.user,
+  user: state.core.auth,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyTableEditQuestionScreen);
