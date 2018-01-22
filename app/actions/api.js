@@ -3,36 +3,36 @@ import { auth, base} from '../firebase'
 import {saveUserLocal} from './coreActions'
 import * as types from './actionTypes'
 
-export const createUser = (data) => ({
-    firebase: 'auth',
-    type: types.REGISTER_USER,
-    data,
+export const signUp = (body) => ({
+    type: types.SIGN_UP,
+    method: 'POST',
+    path: '/user',
+    body,
+});
+
+export const changePassword = (body) => ({
+    type: types.CHANGE_PASSWORD,
+    method: 'POST',
+    path: '/user/change-password',
+    body,
+});
+
+export const signIn = (body) => ({
+    type: types.SIGN_IN,
+    method: 'POST',
+    path: '/login',
+    body,
+});
+
+export const signOut = (body) => ({
+    type: types.SIGN_OUT,
+    method: 'DELETE',
+    path: '/logout',
 })
 
-export const updatePassword = (password) => ({
-    firebase: 'auth',
-    type: types.UPDATE_USER_PASSWORD,
-    data: {password},
-})
-export const updateUserProfile = (data) => ({
-    firebase: 'auth',
-    type: types.UPDATE_USER_PROFILE,
-    data,
-})
-export const loginUser = (data) => ({
-    firebase: 'auth',
-    type: types.LOGIN_USER,
-    data
-})
-
-export const forgotPassword = (email) => ({
-    firebase: 'auth',
+export const forgotPassword = (body) => ({
     type: types.FORGOT_PASSWORD,
-    data: {email}
-})
-
-export const logoutUser = () => ({
-    firebase: 'auth',
-    type: types.LOGOUT_USER,
-    data: {}
-})
+    method: 'POST',
+    path: '/user/forgot-password',
+    body,
+});

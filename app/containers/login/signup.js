@@ -20,10 +20,9 @@ import {
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
-import {createUser, updateUserProfile} from '../../actions/api';
+import {signUp, updateUserProfile} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
-import { auth, base} from '../../firebase'
 
 class SignUpForm extends Component {
     onRegister = () => {
@@ -56,9 +55,7 @@ SignUpReduxForm = reduxForm({
 class SignUp extends Component { // eslint-disable-line
     onSignUp = ({email, password, displayName}) => {
         const {signUp, updateUserProfile} = this.props
-        return signUp({email, password}).then(user => {
-            updateUserProfile({displayName})
-            base.post(`users/${user.uid}`, {data:{contact: true, role: 'patient', name: displayName, email}})
+        return signUp({first_name:displayName, email, password, role: 'patient', newsletter: true}).then(user => {
             Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(error => {
@@ -82,7 +79,7 @@ class SignUp extends Component { // eslint-disable-line
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    signUp: (body) => dispatch(createUser(body)),
+    signUp: (body) => dispatch(signUp(body)),
     updateUserProfile: (body) => dispatch(updateUserProfile(body)),
 })
 

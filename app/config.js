@@ -6,5 +6,6 @@ export default {
         projectId: "dataapp-3b8c4",
         storageBucket: "dataapp-3b8c4.appspot.com",
         messagingSenderId: "880222053307"
-    }
+    },
+    apiHost:'http://localhost:8000/api/'
 }

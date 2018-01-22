@@ -133,7 +133,7 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
   drawings: (state.drawing && state.drawing.drawings) || [],
   themeState: state.drawer.themeState,
-  user: (state.core && state.core.user)
+  user: (state.core && state.core.auth)
 });
 
 export default connect(mapStateToProps, bindAction)(SettingScreen);

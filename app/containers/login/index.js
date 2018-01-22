@@ -20,9 +20,8 @@ import {
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
 import { reduxForm, Field } from 'redux-form';
-import {loginUser} from '../../actions/api';
+import {signIn} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
-import { auth, base} from '../../firebase'
 import styles from './styles';
 
 class LoginForm extends Component {
@@ -86,22 +85,13 @@ class Login extends Component { // eslint-disable-line
 
 const mapDispatchToProps = (dispatch) => ({
     login: (body) => {
-        return dispatch(loginUser(body)).then(res => {
+        return dispatch(signIn(body)).then(res => {
             console.log(res)
-            base.update(`users/${res.uid}`, {data:{name: res.displayName, email: res.email}})
             Actions.push('activity')
         }).catch(err => {
             console.log(err)
             let errors = {}
             Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
-            switch(err.code) {
-                case 'auth/wrong-password':
-                    errors.password = err.message
-                    break;
-                case 'auth/wrong-email':
-                    errors.email = err.message
-                    break;
-            }
             throw new SubmissionError(errors)
         })
     }
@@ -110,7 +100,7 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = state => ({
     themeState: state.drawer.themeState,
     routes: state.drawer.routes,
-    user: state.core.user || {},
+    user: state.core.auth || {},
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
