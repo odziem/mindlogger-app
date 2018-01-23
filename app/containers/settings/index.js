@@ -9,8 +9,7 @@ import { Actions } from 'react-native-router-flux';
 import {reduxForm, Field} from 'redux-form';
 
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../components/form/FormItem'
-import { auth, base} from '../../firebase'
-import {updateUserProfile, updateUserPassword} from '../../actions/api';
+import {updateUser, updateUserPassword} from '../../actions/api';
 import {updateUserLocal} from '../../actions/coreActions';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 
@@ -24,7 +23,7 @@ class UserForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot, user } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Full name" name="displayName" placeholder={user.displayName} style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Full name" name="first_name" placeholder={user.first_name} style={styles.text} floatingLabel />
                 <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
                 <Field name="role"
                 component ={FormRadioButtonGroup}
@@ -56,10 +55,7 @@ class SettingScreen extends Component {
 
   componentWillMount() {
     const {user, surveys, loadSurveys} = this.props;
-    base.syncState(`users/${user.uid}`, {
-      context: this,
-      state: 'userInfo'
-    });
+    this.setState({user})
   }
 
   pushRoute(route) {
@@ -71,17 +67,14 @@ class SettingScreen extends Component {
     Actions.pop()
   }
 
-  onUserSubmit = ({displayName, password, role}) => {
-    const {user, updateUserProfile, updateUserPassword, updateUserLocal} = this.props
+  onUserSubmit = ({first_name, password, role}) => {
+    const {user, updateUser, updateUserPassword, updateUserLocal} = this.props
     let arr = []
-    if(displayName != user.displayName) {
-        arr.push(updateUserProfile({displayName}))
-    }
+    arr.push(updateUser({first_name: first_name, role}))
     if(password && password.length>0 && user.password != password) {
-        arr.push(updateUserPassword(password))
+        //arr.push(updateUserPassword(password))
     }
     if(role) {
-        this.setState({userInfo:{role, name: displayName}})
         updateUserLocal({role})
     }
     if(arr.length > 0) {
@@ -97,7 +90,7 @@ class SettingScreen extends Component {
 
   render() {
     const {user} = this.props
-    let data = {...user, ...this.state.userInfo}
+
     return (
       <Container style={styles.container}>
         <Header>
@@ -114,7 +107,7 @@ class SettingScreen extends Component {
         </Header>
 
         <Content padder>
-            <UserReduxForm onSubmit={this.onUserSubmit} initialValues={data} user={user} />
+            <UserReduxForm onSubmit={this.onUserSubmit} initialValues={user} user={user} />
         </Content>
       </Container>
     );
@@ -126,7 +119,7 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({updateUserProfile, updateUserPassword, updateUserLocal}, dispatch)
+    ...bindActionCreators({updateUser, updateUserPassword, updateUserLocal}, dispatch)
   };
 }
 

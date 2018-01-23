@@ -85,6 +85,9 @@ class Login extends Component { // eslint-disable-line
 
 const mapDispatchToProps = (dispatch) => ({
     login: (body) => {
+        if(!body.password || body.password.length == 0) {
+            throw new SubmissionError({password:'Password can not be empty!'})
+        }
         return dispatch(signIn(body)).then(res => {
             console.log(res)
             Actions.push('activity')

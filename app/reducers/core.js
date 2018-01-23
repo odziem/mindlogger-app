@@ -7,6 +7,7 @@ const initialState = {
 
 export default function coreReducer(state = initialState, action = {}) {
     var user
+    var acts
     if (action.path && action.method && action.status === 'COMPLETE') {
         switch (action.type) {
             case types.SIGN_IN:
@@ -20,7 +21,20 @@ export default function coreReducer(state = initialState, action = {}) {
                     ...state,
                     auth: false
                 }
-            
+            case types.ADD_ACT:
+                acts = [...state.core.acts]
+                acts.unshift(action.response.act)
+                return {
+                    ...state,
+                    acts,
+                    act: action.response.act
+                }
+            case types.UPDATE_ACT:
+                acts[action.index] = action.response.act
+                return {
+                    ...state,
+                    acts
+                }
             default:
               return {
                   ...state,
@@ -50,6 +64,18 @@ export default function coreReducer(state = initialState, action = {}) {
                     ...state,
                     user
                 };
+            case types.UPDATE_ACTIVITY:
+                acts = state.acts
+                acts[action.index] = action.data
+                return {
+                    ...state,
+                    acts
+                }
+            case types.SET_ACTIVITY:
+                return {
+                    ...state,
+                    act: action.data
+                }
             default:
                 return state;
         }
