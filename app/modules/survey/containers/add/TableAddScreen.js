@@ -6,7 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
-import {fbAddActivityWithAudio, fbUpdateActivityWithAudio} from '../../../../firebase'
+import { addAct, updateAct } from '../../../../actions/api';
 
 const surveyInitial = {
   questions:[],
@@ -32,30 +32,31 @@ class SurveyTableAddScreen extends Component {
   }
 
   onAddSurvey = (body) => {    
-    const data = {...body, 'activity_type':'survey', mode: 'table'}
-    const {addSurvey} = this.props
-    return fbAddActivityWithAudio('surveys', data, result => {
-      console.log("pushed", result)
-    }).then(res => {
-      return addSurvey(res)
+    const {addSurvey, addAct} = this.props
+    let data = {...body, questions: [], mode: 'table'}
+    let params = { act_data: data, type:'survey', title}
+    return addAct(params).then( res => {
+      Actions.push('survey-edit-question',{actIndex:0, questionIndex:0})
     }).catch(err => {
-
+      console.log(err)
+      Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
     })
     
   }
 
   onEditSurvey = (body) => {
-    let {surveys, surveyIdx, user, updateSurvey} = this.props
+    let {actIndex, user, updateAct} = this.props
     let survey = {...this.state.survey, ...body}
+    let {title, ...act_data} = survey
+    let act = {title, act_data}
+
     if(user.role == 'clinician') {
-      return fbUpdateActivityWithAudio('surveys', survey).then(result => {
-        updateSurvey(surveyIdx, survey)
+      return updateAct(actIndex, act).then(result => {
         Actions.pop()
       }).catch(err => {
-        console.log(err, survey)
+        Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
       })
     } else {
-      updateSurvey(surveyIdx, survey)
       Actions.pop()
     }
   }
@@ -96,18 +97,12 @@ class SurveyTableAddScreen extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  addSurvey: body => {
-    body.questions = []
-    body.answers = {}
-    dispatch(addSurvey(body))
-    Actions.replace("survey_table_edit_question",{surveyIdx:-1, questionIdx:0})
-  },
-  updateSurvey: (surveyIdx, body) => dispatch(updateSurvey(surveyIdx, body)),
-})
+const mapDispatchToProps = {
+  addAct, updateAct
+}
 
 const mapStateToProps = state => ({
-  surveys: state.survey.surveys,
+  acts: state.core.acts,
   themeState: state.drawer.themeState,
   user: state.core.auth,
 });

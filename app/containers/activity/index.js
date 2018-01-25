@@ -134,7 +134,7 @@ class ActivityScreen extends Component {
         const {deleteAct} = this.props
         let actIndex = this.state[secId][rowId]
         return deleteAct(actIndex).then(res => {
-            Toast.make({text: 'Deleted successfully', buttonText: 'OK'})
+            Toast.show({text: 'Deleted successfully', buttonText: 'OK'})
         })
     }
 
@@ -181,7 +181,7 @@ class ActivityScreen extends Component {
         console.log(secId)
         if(secId == 'surveys') {
             const survey = act.act_data
-            if (survey.questions.length == 0) {
+            if (!survey.questions || survey.questions.length == 0) {
                 Toast.show({text: 'This survey have no questions. Pleaes add questions!', position: 'top', type: 'warning'})
             }
             if(survey.mode == 'table') {

@@ -1,12 +1,10 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment } from 'native-base';
+import { Toast, Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment } from 'native-base';
 
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
-
-import {fbAddActivity,fbAddActivityWithAudio, fbUpdateActivityWithAudio} from '../../../../firebase'
 import { addAct, updateAct } from '../../../../actions/api';
 
 const surveyInitial = {
@@ -39,10 +37,9 @@ class SurveyBasicAddScreen extends Component {
       return updateAct(actIndex, act).then(result => {
         Actions.pop()
       }).catch(err => {
-        console.log(err, survey)
+        Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
       })
     } else {
-      //updateSurvey(actIndex, survey)
       Actions.pop()
     }
   }
@@ -54,13 +51,14 @@ class SurveyBasicAddScreen extends Component {
     return addAct(params).then( res => {
       Actions.push('survey-edit-question',{actIndex:0, questionIndex:0})
     }).catch(err => {
-      console.log(err, survey)
+      console.log(err)
+      Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
     })
   }
 
   componentWillMount() {
     let {acts, actIndex} = this.props
-    if(actIndex) {
+    if(actIndex !== undefined) {
       const survey = acts[actIndex]
       this.setState({survey: {title: survey.title, ...survey.act_data}})
     } else {

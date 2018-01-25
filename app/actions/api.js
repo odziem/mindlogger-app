@@ -55,7 +55,7 @@ export const getActs = () => ({
 export const getAssignedActs = () => ({
     type: types.GET_LIST,
     method: 'GET',
-    path: '/acts/assigned'
+    path: '/assigned_acts'
 })
 
 export const addAct = (body) => ({
@@ -65,10 +65,10 @@ export const addAct = (body) => ({
     body
 })
 
-export const updateAct = (index, body) => ({
+export const updateAct = (index, {id, ...body}) => ({
     type: types.UPDATE_ACT,
     method: 'PUT',
-    path: `/acts/${index}`,
+    path: `/acts/${id}`,
     body
 })
 

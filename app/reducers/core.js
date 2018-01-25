@@ -22,7 +22,7 @@ export default function coreReducer(state = initialState, action = {}) {
                     auth: false
                 }
             case types.ADD_ACT:
-                acts = [...state.core.acts]
+                acts = [...state.acts]
                 acts.unshift(action.response.act)
                 return {
                     ...state,
@@ -30,6 +30,7 @@ export default function coreReducer(state = initialState, action = {}) {
                     act: action.response.act
                 }
             case types.UPDATE_ACT:
+                acts = [...state.acts]
                 acts[action.index] = action.response.act
                 return {
                     ...state,
@@ -66,7 +67,8 @@ export default function coreReducer(state = initialState, action = {}) {
                 };
             case types.UPDATE_ACTIVITY:
                 acts = state.acts
-                acts[action.index] = action.data
+                act = acts[action.index]
+                acts[action.index] = { ...act, ...action.data}
                 return {
                     ...state,
                     acts
