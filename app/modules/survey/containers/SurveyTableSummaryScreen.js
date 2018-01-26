@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar, ListView} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1, Separator, Thumbnail } from 'native-base';
+import { Toast, Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1, Separator, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -8,7 +8,7 @@ import Collapsible from 'react-native-collapsible';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
-import {fbSaveAnswer} from '../../../firebase'
+import { saveAnswer } from '../../../actions/api';
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
@@ -56,14 +56,16 @@ class SurveyTableSummaryScreen extends Component {
   }
 
   onDone() {
-    fbSaveAnswer(this.props.survey)
-    Actions.pop()
+    const {saveAnswer, act, answer, survey} = this.props
+    saveAnswer(act.id, survey, answer).then(res => {
+      Actions.pop()
+    }).catch(err => {
+      Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
+    })
   }
   
   render() {
-    const {survey} = this.props
-    
-    const {questions, answers} = survey
+    const {act, survey:{questions}, answer:{answers}} = this.props
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
     let dRows = []
     questions.forEach((question, secId) => {
@@ -82,7 +84,7 @@ class SurveyTableSummaryScreen extends Component {
             </Button>
         </Left>
         <Body style={{flex:2}}>
-            <Title>{survey.title}</Title>
+            <Title>{act.title}</Title>
         </Body>
         <Right/>
       </Header>
@@ -99,7 +101,9 @@ class SurveyTableSummaryScreen extends Component {
 }
 
 export default connect(state => ({
-  survey: state.survey.survey_in_action,
+  act: state.core.act,
+  survey: state.core.act.act_data,
+  answer:state.core.answer
 }),
-  (dispatch) => bindActionCreators(surveyActions, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer}, dispatch)
 )(SurveyTableSummaryScreen);

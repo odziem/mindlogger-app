@@ -27,7 +27,6 @@ export default function coreReducer(state = initialState, action = {}) {
                 return {
                     ...state,
                     acts,
-                    act: action.response.act
                 }
             case types.UPDATE_ACT:
                 acts = [...state.acts]
@@ -39,7 +38,14 @@ export default function coreReducer(state = initialState, action = {}) {
             case types.SAVE_ANSWER:
                 return {
                     ...state,
-                    answer:{}
+                    answer:undefined
+                }
+            case types.DELETE_ACT:
+                acts = [...state.acts]
+                acts.splice(action.index,1)
+                return {
+                    ...state,
+                    acts
                 }
             default:
               return {
@@ -84,10 +90,17 @@ export default function coreReducer(state = initialState, action = {}) {
                     answer: action.data
                 }
             case types.SET_ACTIVITY:
-                return {
-                    ...state,
-                    act: action.data
-                }
+                if(action.data.id != state.act.id)
+                    return {
+                        ...state,
+                        act:action.data,
+                        answer: undefined
+                    }
+                else
+                    return {
+                        ...state,
+                        act: action.data
+                    }
             default:
                 return state;
         }

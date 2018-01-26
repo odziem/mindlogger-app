@@ -15,8 +15,9 @@ import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 import SurveyImageSelector from '../components/SurveyImageSelector'
+import SurveyTableInput from '../components/SurveyTableInput'
 
-class SurveyBasicQuestionScreen extends Component {
+class SurveyQuestionScreen extends Component {
   constructor(props) {
     super(props)
   }
@@ -41,17 +42,20 @@ class SurveyBasicQuestionScreen extends Component {
     let {questionIndex, survey} = this.props
     let {questions} = survey
     questionIndex = questionIndex + 1
+
     if(questionIndex<questions.length) {
       Actions.replace("survey_question", { questionIndex:questionIndex})
     } else {
-      Actions.replace("survey_question_summary")
+      Actions.replace("survey_"+ survey.mode + "_summary")
     }
+    
   }
 
   prevQuestion = () => {
     let {questionIndex, survey} = this.props
     let {questions, answers} = survey
     questionIndex = questionIndex - 1
+
     if(questionIndex>=0) {
       Actions.replace("survey_question", { questionIndex:questionIndex })
     } else {
@@ -61,25 +65,31 @@ class SurveyBasicQuestionScreen extends Component {
 
   renderQuestion() {
     const { questionIndex, survey, answers} = this.props
-    
     let question = survey.questions[questionIndex]
     let answer = answers[questionIndex] && answers[questionIndex].result
-    switch(question.type) {
-      case 'text':
-        return (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />)
-      case 'bool':
-        return (<SurveyBoolSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-      case 'single_sel':
-        return (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-      case 'multi_sel':
-        return (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-      case 'image_sel':
-        return (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+    if(survey.mode == 'basic') {
+      switch(question.type) {
+        case 'text':
+          return (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />)
+        case 'bool':
+          return (<SurveyBoolSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+        case 'single_sel':
+          return (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+        case 'multi_sel':
+          return (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+        case 'image_sel':
+          return (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+      }
+    } else {
+      return (<SurveyTableInput onSelect={this.onInputAnswer} data={{question, answer}}/>)
     }
+    
+    
     return (
       <View>
       </View>
       )
+
 
   }
 
@@ -120,7 +130,7 @@ class SurveyBasicQuestionScreen extends Component {
 export default connect(state => ({
     act: state.core.act,
     survey: state.core.act.act_data,
-    answers:state.core.answer.answers || [],
+    answers: state.core.answer && state.core.answer.answers || [],
   }),
   (dispatch) => bindActionCreators({saveAnswer, setAnswer}, dispatch)
-)(SurveyBasicQuestionScreen);
+)(SurveyQuestionScreen);

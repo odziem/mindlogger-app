@@ -12,9 +12,9 @@ import {
 } from 'react-native-audio-toolkit';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { updateUserLocal, setActivity } from '../../actions/coreActions';
+import { updateUserLocal, setActivity, setAnswer } from '../../actions/coreActions';
 
-import { getActs, getAssignedActs } from '../../actions/api';
+import { getActs, getAssignedActs,deleteAct } from '../../actions/api';
 
 import styles from './styles';
 
@@ -133,8 +133,11 @@ class ActivityScreen extends Component {
     deleteActivity(secId, rowId) {
         const {deleteAct} = this.props
         let actIndex = this.state[secId][rowId]
-        return deleteAct(actIndex).then(res => {
+        
+        return deleteAct(actIndex, this.props.acts[actIndex]).then(res => {
             Toast.show({text: 'Deleted successfully', buttonText: 'OK'})
+        }).catch(err => {
+            Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
         })
     }
 
@@ -152,7 +155,7 @@ class ActivityScreen extends Component {
                 if(survey.accordion){
                     Actions.survey_table_accordion()
                 } else {
-                    Actions.survey_table_question({ questionIndex:0})
+                    Actions.survey_question({ questionIndex:0})
                 }
             } else {
                 if(survey.accordion){
@@ -183,7 +186,7 @@ class ActivityScreen extends Component {
         if(secId == 'surveys') {
             const survey = act.act_data
             if (!survey.questions || survey.questions.length == 0) {
-                Toast.show({text: 'This survey have no questions. Pleaes add questions!', position: 'top', type: 'warning'})
+                Toast.show({text: 'This survey have no questions. Pleaes add questions!', position: 'top', type: 'warning', buttonText:'OK'})
             }
             if(survey.mode == 'table') {
                 Actions.push("survey_table_edit_question", {actIndex, questionIdx:0})
@@ -329,7 +332,7 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({setActivity, getActs, getAssignedActs, updateUserLocal}, dispatch)
+    ...bindActionCreators({setActivity, getActs, getAssignedActs, updateUserLocal, deleteAct, setAnswer}, dispatch)
   };
 }
 
@@ -337,6 +340,7 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
   user: (state.core && state.core.auth),
   acts: state.core.acts || [],
+  act: state.core.act,
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);
