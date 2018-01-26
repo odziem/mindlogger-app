@@ -73,11 +73,11 @@ export const updateAct = (index, {id, ...body}) => ({
     body
 })
 
-export const deleteAct = (index) => ({
+export const deleteAct = (index, act) => ({
     type: types.DELETE_ACT,
     method: 'DELETE',
     index,
-    path: `/acts/${index}`
+    path: `/acts/${act.id}`
 })
 
 // Answers
