@@ -139,6 +139,7 @@ class ActivityScreen extends Component {
     }
 
     startActivity(secId, rowId) {
+        const {setActivity} = this.props
         let actIndex = this.state[secId][rowId]
         let act = this.props.acts[actIndex]
         if(secId === 'surveys') {

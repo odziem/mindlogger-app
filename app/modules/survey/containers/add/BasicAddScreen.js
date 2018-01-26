@@ -27,14 +27,13 @@ class SurveyBasicAddScreen extends Component {
     Actions.pop()
   }
 
-  onEditSurvey = ({body}) => {
-    let {actIndex, user, updateAct} = this.props
+  onEditSurvey = (body) => {
+    let {acts, actIndex, user, updateAct} = this.props
     let survey = {...this.state.survey, ...body}
+    let act = acts[actIndex]
     let {title, ...act_data} = survey
-    let act = {title, act_data}
-
     if(user.role == 'clinician') {
-      return updateAct(actIndex, act).then(result => {
+      return updateAct(actIndex, {id: act.id, title, act_data}).then(result => {
         Actions.pop()
       }).catch(err => {
         Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
@@ -68,6 +67,7 @@ class SurveyBasicAddScreen extends Component {
 
   render() {
     const {survey} = this.state;
+    const {actIndex, acts} = this.props
     let title = survey ? survey.title : "New Survey"
     return (
       <Container>
@@ -83,7 +83,7 @@ class SurveyBasicAddScreen extends Component {
           <Right />
         </Header>
         <Content padder>
-          {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey} initialValues={surveyInitial}/>) }
+          {actIndex!=undefined ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey} act={acts[actIndex]}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey} initialValues={surveyInitial}/>) }
         </Content>
       </Container>
     );

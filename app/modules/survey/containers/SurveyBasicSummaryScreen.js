@@ -8,7 +8,7 @@ import Collapsible from 'react-native-collapsible';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
-import {fbSaveAnswer} from '../../../firebase'
+import { saveAnswer } from '../../../actions/api';
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
@@ -25,12 +25,15 @@ class SurveyBasicSummaryScreen extends Component {
     Actions.replace("survey_question", { questionIndex })
   }
   onDone() {
-    fbSaveAnswer(this.props.survey)
-    Actions.pop()
+    const {saveAnswer, act, answer, survey} = this.props
+    saveAnswer(act.id, survey, answer).then(res => {
+      Actions.pop()
+    }).catch(err => {
+      Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
+    })
   }
   render() {
-    const {survey} = this.props
-    const {questions, answers} = survey
+    const {act, survey:{questions}, answer:{answers}} = this.props
     return (
       <Container>
       <Header>
@@ -40,7 +43,7 @@ class SurveyBasicSummaryScreen extends Component {
             </Button>
         </Left>
         <Body style={{flex:2}}>
-            <Title>{survey.title}</Title>
+            <Title>{act.title}</Title>
         </Body>
         <Right/>
       </Header>
@@ -48,7 +51,7 @@ class SurveyBasicSummaryScreen extends Component {
         <H1 style={{textAlign:'center'}}>Responses</H1>
         <List>
         {
-          questions.map((question, idx) => this._renderRow(idx, question, answers[idx] && answers[idx].result))
+          answers && questions.map((question, idx) => this._renderRow(idx, question, answers[idx] && answers[idx].result))
         }
         </List>
         <Button block full onPress={() => this.onDone()}><Text>Done</Text></Button>
@@ -97,7 +100,9 @@ class SurveyBasicSummaryScreen extends Component {
 }
 
 export default connect(state => ({
-  survey: state.survey.survey_in_action,
+  act: state.core.act,
+  survey: state.core.act.act_data,
+  answer:state.core.answer
 }),
-  (dispatch) => bindActionCreators(surveyActions, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer}, dispatch)
 )(SurveyBasicSummaryScreen);

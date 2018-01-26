@@ -68,6 +68,7 @@ export const addAct = (body) => ({
 export const updateAct = (index, {id, ...body}) => ({
     type: types.UPDATE_ACT,
     method: 'PUT',
+    index,
     path: `/acts/${id}`,
     body
 })
@@ -75,5 +76,19 @@ export const updateAct = (index, {id, ...body}) => ({
 export const deleteAct = (index) => ({
     type: types.DELETE_ACT,
     method: 'DELETE',
+    index,
     path: `/acts/${index}`
+})
+
+// Answers
+
+export const saveAnswer = (actId, actData, answerData) => ({
+    type: types.SAVE_ANSWER,
+    method: 'POST',
+    path: '/answers',
+    body: {
+        act_id:actId,
+        act_data:actData,
+        answer_data:answerData
+    }
 })

@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 'redux-form';
 import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1, Thumbnail, ListItem, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import {updateSurvey} from '../../actions'
+
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup, required} from '../../../../components/form/FormItem'
 import ImageBrowser from '../../../../components/image/ImageBrowser'
 import { updateActivity } from '../../../../actions/coreActions';

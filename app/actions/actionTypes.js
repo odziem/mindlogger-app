@@ -13,5 +13,7 @@ export const GET_LIST = 'GET_LIST';
 export const ADD_ACT = 'ADD_ACT';
 export const DELETE_ACT = 'DELETE_ACT';
 export const UPDATE_ACT = 'UPDATE_ACT';
+export const SAVE_ANSWER = 'SAVE_ANSWER';
+export const SET_ANSWER = 'SET_ANSWER';
 export const UPDATE_ACTIVITY = 'UPDATE_ACTIVITY';
 export const SET_ACTIVITY = 'SET_ACTIVITY';

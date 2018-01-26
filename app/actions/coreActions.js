@@ -16,6 +16,11 @@ export const updateActivity = (index, data) => ({
     data,
 })
 
+export const setAnswer = (data) => ({
+    type: types.SET_ANSWER,
+    data
+})
+
 export const setActivity = (data) => ({
     type: types.SET_ACTIVITY,
     data

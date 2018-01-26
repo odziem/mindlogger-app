@@ -7,7 +7,8 @@ import { Actions } from 'react-native-router-flux';
 import * as Progress from 'react-native-progress';
 
 import baseTheme from '../../../theme'
-import {setSurvey} from '../actions'
+import { saveAnswer } from '../../../actions/api';
+import { setAnswer } from '../../../actions/coreActions';
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
@@ -21,8 +22,7 @@ class SurveyBasicQuestionScreen extends Component {
   }
 
   onInputAnswer = (result, data, final=false) => {
-    let {questionIndex, survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {questionIndex, survey:{questions}, answers, setAnswer} = this.props
     let answer = {
       result,
       time: (new Date()).getTime()
@@ -32,14 +32,14 @@ class SurveyBasicQuestionScreen extends Component {
     } else {
       answers.push(answer)
     }
-    setSurvey({...survey, answers})
+    setAnswer({answers})
     if(final)
       setTimeout(() => { this.nextQuestion() }, 500)
   }
 
   nextQuestion = () => {
-    let {questionIndex, survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {questionIndex, survey} = this.props
+    let {questions} = survey
     questionIndex = questionIndex + 1
     if(questionIndex<questions.length) {
       Actions.replace("survey_question", { questionIndex:questionIndex})
@@ -49,7 +49,7 @@ class SurveyBasicQuestionScreen extends Component {
   }
 
   prevQuestion = () => {
-    let {questionIndex, survey, setSurvey} = this.props
+    let {questionIndex, survey} = this.props
     let {questions, answers} = survey
     questionIndex = questionIndex - 1
     if(questionIndex>=0) {
@@ -60,9 +60,10 @@ class SurveyBasicQuestionScreen extends Component {
   }
 
   renderQuestion() {
-    const { questionIndex, survey } = this.props
+    const { questionIndex, survey, answers} = this.props
+    
     let question = survey.questions[questionIndex]
-    let answer = survey.answers[questionIndex] && survey.answers[questionIndex].result
+    let answer = answers[questionIndex] && answers[questionIndex].result
     switch(question.type) {
       case 'text':
         return (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />)
@@ -83,7 +84,7 @@ class SurveyBasicQuestionScreen extends Component {
   }
 
   render() {
-    const { questionIndex, survey } = this.props
+    const { act, questionIndex, survey } = this.props
     const length = survey.questions.length
     const index = questionIndex + 1
     const progressValue = index/length
@@ -96,7 +97,7 @@ class SurveyBasicQuestionScreen extends Component {
           </Button>
         </Left>
         <Body style={{flex:2}}>
-            <Title>{survey.title}</Title>
+            <Title>{act.title}</Title>
         </Body>
         <Right>
           <Button transparent onPress={() => this.nextQuestion()}>
@@ -117,7 +118,9 @@ class SurveyBasicQuestionScreen extends Component {
 }
 
 export default connect(state => ({
-    survey: state.survey.survey_in_action,
+    act: state.core.act,
+    survey: state.core.act.act_data,
+    answers:state.core.answer.answers || [],
   }),
-  (dispatch) => bindActionCreators({setSurvey}, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer, setAnswer}, dispatch)
 )(SurveyBasicQuestionScreen);

@@ -31,10 +31,15 @@ export default function coreReducer(state = initialState, action = {}) {
                 }
             case types.UPDATE_ACT:
                 acts = [...state.acts]
-                acts[action.index] = action.response.act
+                acts[action.index] = {...acts[action.index], ...action.body}
                 return {
                     ...state,
                     acts
+                }
+            case types.SAVE_ANSWER:
+                return {
+                    ...state,
+                    answer:{}
                 }
             default:
               return {
@@ -72,6 +77,11 @@ export default function coreReducer(state = initialState, action = {}) {
                 return {
                     ...state,
                     acts
+                }
+            case types.SET_ANSWER:
+                return {
+                    ...state,
+                    answer: action.data
                 }
             case types.SET_ACTIVITY:
                 return {

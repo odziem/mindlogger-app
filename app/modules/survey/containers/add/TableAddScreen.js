@@ -45,10 +45,10 @@ class SurveyTableAddScreen extends Component {
   }
 
   onEditSurvey = (body) => {
-    let {actIndex, user, updateAct} = this.props
+    let {actIndex, acts, user, updateAct} = this.props
     let survey = {...this.state.survey, ...body}
     let {title, ...act_data} = survey
-    let act = {title, act_data}
+    let act = {id:acts[actIndex].id, title, act_data}
 
     if(user.role == 'clinician') {
       return updateAct(actIndex, act).then(result => {
@@ -73,6 +73,7 @@ class SurveyTableAddScreen extends Component {
 
   render() {
     const {survey} = this.state;
+    const {actIndex, acts} = this.props
     let title = survey ? survey.title : "New Table Survey"
     return (
       <Container>
@@ -89,7 +90,7 @@ class SurveyTableAddScreen extends Component {
         </Header>
         <Content>
           <Content padder>
-            {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey} initialValues={surveyInitial}/>) }
+            {actIndex!=undefined ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey} act={acts[actIndex]}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey} initialValues={surveyInitial}/>) }
           </Content>
         </Content>
       </Container>

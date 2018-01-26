@@ -6,7 +6,6 @@ import { Actions } from 'react-native-router-flux';
 import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 'redux-form';
 import { Toast, Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, ListItem, Thumbnail } from 'native-base';
 
-import {updateSurvey} from '../../actions'
 import {FormInputItem, FormInputNumberItem, FormSwitchItem, FormPickerGroup, required} from '../../../../components/form/FormItem'
 import ImageBrowser from '../../../../components/image/ImageBrowser'
 import { updateActivity } from '../../../../actions/coreActions';
