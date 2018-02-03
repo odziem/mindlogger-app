@@ -36,8 +36,8 @@ class LoginForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Email" name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
+                <Field component={FormInputItem} placeholder="Email" name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} placeholderTextColor={'#aaa'}/>
+                <Field component={FormInputItem} placeholder="Password" name="password" style={styles.text} secureTextEntry={true} placeholderTextColor={'#aaa'}/>
                 <Row style={{height: 40}}>
                     <Body>
                     </Body>
