@@ -17,8 +17,9 @@ import Svg,{
 
 import baseTheme from '../../../theme'
 import {setDrawing} from '../actions'
-import {fbUploadFile, fbSaveAnswer} from '../../../firebase'
+
 import DrawingBoard from '../components/DrawingBoard'
+import { saveAnswer } from '../../../actions/api';
 
 
 class DrawingActivityScreen extends Component {
@@ -35,7 +36,6 @@ class DrawingActivityScreen extends Component {
         //this._play()
     }
 
-
     toggleSpinner = (show = true) => {
         this.setState({spinner: show})
     }
@@ -43,10 +43,14 @@ class DrawingActivityScreen extends Component {
     onSave = () => {
         if(!this.board) return
         let {drawing} = this.state
+        const {saveAnswer, act} = this.props
         let result = this.board.save()
-        fbSaveAnswer({...drawing, ...result, updated_at: (new Date()).getTime()})
-        Actions.pop()
-        
+        saveAnswer(act.id, act.act_data, result).then(res => {
+            Actions.pop()
+        }).catch(err => {
+            this.toggleSpinner(false)
+            Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+        })
     }
 
     renderTimer() {
@@ -102,16 +106,17 @@ class DrawingActivityScreen extends Component {
             </Button>
             </Left>
             <Body style={{flex:2}}>
-                <Title>{drawing.title}</Title>
+                <Title>{this.props.act.title}</Title>
             </Body>
             <Right>
             </Right>
         </Header>
-        <View style={{ flex: 1, margin: 20 }}>
+        <Content style={{ flex: 1, margin: 20 }}>
             {drawing.timer && drawing.timer>0 ? this.renderTimer() : <Text/>}
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} > 
-                <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
-            </View>
+            <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
+            {/* <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} > 
+                
+            </View> */}
             <View style={{alignItems:'center', marginTop:20}}>
                 <Text>{drawing.instruction}</Text>
             </View> 
@@ -121,16 +126,17 @@ class DrawingActivityScreen extends Component {
             <View style={{marginTop:20}}>
                 <Button full block onPress={this.onSave} disabled={spinner || !started}><Text>Save</Text>{spinner && <Spinner />}</Button>
             </View>
-        </View>
+        </Content>
         </Container>
         )
     }
 }
 
 export default connect(state => ({
-    drawing: state.drawing.drawing_in_action,
+    act: state.core.act,
+    drawing: state.core.act.act_data,
   }),
-  (dispatch) => bindActionCreators({setDrawing}, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer}, dispatch)
 )(DrawingActivityScreen);
 
 

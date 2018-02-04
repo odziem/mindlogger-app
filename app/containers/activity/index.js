@@ -116,6 +116,7 @@ class ActivityScreen extends Component {
 
     editActivity(secId, rowId) {
         let actIndex = this.state[secId][rowId]
+        Toast.show({text: `${this.state[secId]}`, buttonText:'ok'})
         if(secId == 'surveys') {
             const survey = this.activityFor(secId, rowId)
             if(survey.act_data.mode === 'table') {

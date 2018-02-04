@@ -102,7 +102,7 @@ class DrawingAddForm extends Component {
                 {text:"one time",value:"1"},
             ]} />
             <Button onPress={handleSubmit(onSubmit)} disabled={submitting} block style={{ margin: 15, marginTop: 50 }}>
-                <Text>{ initialValues.uuid ? "Update" : "Create" }</Text>
+                <Text>{ initialValues.id ? "Update" : "Create" }</Text>
             </Button>
             </Form>)
     }
