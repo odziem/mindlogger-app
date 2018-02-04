@@ -23,6 +23,7 @@ import { reduxForm, Field } from 'redux-form';
 import {signIn} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
+import { auth } from '../../firebase';
 
 class LoginForm extends Component {
     onRegister = () => {
@@ -90,6 +91,8 @@ const mapDispatchToProps = (dispatch) => ({
         }
         return dispatch(signIn(body)).then(res => {
             console.log(res)
+            return auth.signInAnonymously()
+        }).then(res => {
             Actions.push('activity')
         }).catch(err => {
             console.log(err)
