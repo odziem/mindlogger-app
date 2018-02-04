@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import SurveyAddScreen from './SurveyAddScreen'
 
 
-export default class SurveyBasicAddScreen extends SurveyAddScreen {
-  getMode() {
-    return 'basic'
+export default class SurveyBasicAddScreen extends React.Component {
+  render() {
+    return (<SurveyAddScreen {...this.props} mode='basic'/>)
   }
 }

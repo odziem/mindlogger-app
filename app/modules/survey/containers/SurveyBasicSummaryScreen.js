@@ -102,7 +102,7 @@ class SurveyBasicSummaryScreen extends Component {
 export default connect(state => ({
   act: state.core.act,
   survey: state.core.act.act_data,
-  answer:state.core.answer
+  answer:state.core.answer || {}
 }),
   (dispatch) => bindActionCreators({saveAnswer}, dispatch)
 )(SurveyBasicSummaryScreen);

@@ -2,10 +2,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Toast, Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment } from 'native-base';
-
 import { Actions } from 'react-native-router-flux';
+import { RNS3 } from 'react-native-aws3';
+
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import { addAct, updateAct } from '../../../../actions/api';
+import config from '../../../../config';
+import { prepareAct } from '../../../../firebase';
 
 const surveyInitial = {
   questions:[],
@@ -27,19 +30,19 @@ class SurveyAddScreen extends Component {
     Actions.pop()
   }
 
-  getMode() {
-    return ''
-  }
-
   onEditSurvey = (body) => {
     let {acts, actIndex, user, updateAct} = this.props
     let survey = {...this.state.survey, ...body}
     let act = acts[actIndex]
-    let {title, ...act_data} = survey
+    let {title, ...data} = survey
     if(user.role == 'clinician') {
-      return updateAct(actIndex, {id: act.id, title, act_data}).then(result => {
-        Actions.pop()
+      return prepareAct(data).then( act_data => {
+        let params = { act_data, type:'survey', title}
+        return updateAct(actIndex, {id: act.id, title, act_data}).then(result => {
+          Actions.pop()
+        })
       }).catch(err => {
+        console.log(err)
         Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
       })
     } else {
@@ -48,16 +51,19 @@ class SurveyAddScreen extends Component {
   }
 
   onAddSurvey = ({title, ...body}) => {
-    const {addSurvey, addAct} = this.props
-    let mode = this.getMode()
+    const {addSurvey, addAct, mode} = this.props
     let data = {...body, questions: [], mode}
-    let params = { act_data: data, type:'survey', title}
-    return addAct(params).then( res => {
-      Actions.push(`survey_${mode}_edit_question`,{actIndex:0, questionIndex:0})
+    return prepareAct(data).then( act_data => {
+      let params = { act_data, type:'survey', title}
+      return addAct(params)
+    }).then( res => {
+      Toast.show({text: mode, buttonText: 'OK'})
+      Actions.push(`survey_${mode}_edit_question`,{actIndex:0, questionIdx:0})
     }).catch(err => {
       console.log(err)
       Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
     })
+    
   }
 
   componentWillMount() {
@@ -72,8 +78,7 @@ class SurveyAddScreen extends Component {
 
   render() {
     const {survey} = this.state;
-    const {actIndex, acts} = this.props
-    const mode = this.getMode()
+    const {actIndex, acts, mode} = this.props
     let title = survey ? survey.title : (mode == 'table' ? "New Table Survey" : "New Survey" )
     return (
       <Container>
