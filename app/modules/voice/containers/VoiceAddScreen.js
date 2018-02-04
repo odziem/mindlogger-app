@@ -92,8 +92,9 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const mapStateToProps = state => ({
-  voices: state.voice.voices,
+  acts: state.core.acts,
   themeState: state.drawer.themeState,
+  user: state.core.auth,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(VoiceAddScreen);
