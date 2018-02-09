@@ -169,7 +169,7 @@ class ActivityScreen extends Component {
             const {setVoice} = this.props
             let voice = act
             setActivity(act)
-            Actions.push("voice_start")
+            Actions.push("voice_activity")
         } else if(secId === 'drawings') {
             const {setDrawing} = this.props
             let drawing = act.act_data
@@ -266,7 +266,7 @@ class ActivityScreen extends Component {
     render() {
         const {surveys, voices, drawings} = this.state;
         const {user} = this.props
-        console.log(drawings)
+        console.log(this.state, this.props.acts)
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>

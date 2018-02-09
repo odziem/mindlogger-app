@@ -5,7 +5,8 @@ import { Actions } from 'react-native-router-flux';
 import { RNS3 } from 'react-native-aws3';
 
 import DrawingAddForm from '../components/DrawingAddForm';
-import {fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile, prepareAct} from '../../../firebase'
+import {fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
+import { prepareAct } from '../../../helper';
 import { addAct, updateAct } from '../../../actions/api';
 
 
@@ -21,6 +22,7 @@ class DrawingAddScreen extends Component {
   }
 
   onEditDrawing = (body) => {
+    
     let {actIndex, updateAct, acts} = this.props
     let drawing = {...this.state.drawing, ...body}
     let {title, ...data} = drawing
@@ -47,6 +49,7 @@ class DrawingAddScreen extends Component {
       return addAct({act_data, type:'drawing', title})
     })
     .then(res => {
+      console.log(res)
       this.toggleSpinner(false)
       Actions.pop()
     }).catch(err => {

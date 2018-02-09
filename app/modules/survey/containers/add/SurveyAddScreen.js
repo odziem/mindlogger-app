@@ -8,7 +8,7 @@ import { RNS3 } from 'react-native-aws3';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import { addAct, updateAct } from '../../../../actions/api';
 import config from '../../../../config';
-import { prepareAct } from '../../../../firebase';
+import { prepareAct } from '../../../../helper';
 
 const surveyInitial = {
   questions:[],

@@ -26,21 +26,7 @@ export const fbUpdateActivity = (module, activity) => {
   const {key, ...data} = activity
   return base.update(`${module}/${key}`,{data})
 }
-export const prepareAct = (data) => {
-  return new Promise((resolve, reject) => {
-    if(data.audio_path) {
-      var filename = data.audio_path.replace(/^.*[\\\/]/, '')
-      fbUploadFile(data.audio_path, 'audios/'+filename).then(url => {
-        data.audio_url = url
-        resolve(data);
-      }).catch(err => {
-        reject(err);
-      })
-    } else {
-      resolve(data);
-    }
-  })
-}
+
 export const fbUpdateActivityWithAudio = (module, activity) => {
     if(activity.audio_path) {
       var filename = activity.audio_path.replace(/^.*[\\\/]/, '')
@@ -103,10 +89,10 @@ export const fbSaveAnswer = (activity, completion) => {
     return ref.key
 }
 
-const Blob = RNFetchBlob.polyfill.Blob
-const fs = RNFetchBlob.fs
-window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
-window.Blob = Blob
+// const Blob = RNFetchBlob.polyfill.Blob
+// const fs = RNFetchBlob.fs
+// window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+// window.Blob = Blob
 export const fbUploadFile = (uri, targetPath, mime = 'application/octet-stream') => {
     return new Promise((resolve, reject) => {
         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri

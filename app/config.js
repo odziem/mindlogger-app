@@ -7,5 +7,12 @@ export default {
         storageBucket: "dataapp-3b8c4.appspot.com",
         messagingSenderId: "880222053307"
     },
-    apiHost:'http://localhost:8000/api'
+    apiHost:'http://localhost:8000/api',
+    s3: {
+        bucket: "cmi-dataapp",
+        region: "us-west-1",
+        accessKey: "AKIAJSKJBTHX7RPQNMRQ",
+        secretKey: "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",
+        successActionStatus: 201
+    }
 }

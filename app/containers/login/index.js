@@ -40,15 +40,15 @@ class LoginForm extends Component {
                 <Field component={FormInputItem} placeholder="Email" placeholderTextColor={'#aaa'} name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} />
                 <Field component={FormInputItem} placeholder="Password" placeholderTextColor={'#aaa'} name="password" style={styles.text} secureTextEntry={true}/>
                 <Button style={{marginTop:10}} warning block onPress={handleSubmit(onSubmit)} disabled={submitting}>
-                    <Text>Login</Text>
+                    <Text>LOGIN</Text>
                 </Button>
                 <Row style={styles.bottomRow}>
                     <Body>
                         <Button transparent onPress={this.onForgotPassword}><Text style={styles.rightText}>GET A NEW PASSWORD</Text></Button>
                     </Body>    
                 </Row>
-                <Row style={{height: 40}}>
-                    <Body><Button transparent onPress={this.onRegister}><Text style={styles.boldText}>Register now</Text></Button></Body>
+                <Row style={{height: 40, marginTop: 20}}>
+                    <Body><Button transparent onPress={this.onRegister}><Text style={styles.boldText}>REGISTER NOW</Text></Button></Body>
                 </Row>
             </Form>
         )
@@ -88,7 +88,8 @@ const mapDispatchToProps = (dispatch) => ({
         }
         return dispatch(signIn(body)).then(res => {
             console.log(res)
-            return auth.signInAnonymously()
+            return true
+            //return auth.signInAnonymously()
         }).then(res => {
             Actions.push('activity')
         }).catch(err => {
