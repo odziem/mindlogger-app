@@ -114,6 +114,23 @@ class ActivityScreen extends Component {
         )
     }
 
+    promptToEditActivity(secId, rowId) {
+        ActionSheet.show(
+        {
+            options: ["Set frequency time", "Edit questions", "Cancel"],
+            cancelButtonIndex: 2,
+            title: "Please select type of activity to add"
+        },
+        buttonIndex => {
+            if(buttonIndex==0) {
+                this.editFrequency(secId, rowId)
+            } else if(buttonIndex == 1) {
+                this.editActivityDetail(secId, rowId)
+            }
+        }
+        )
+    }
+
     editActivity(secId, rowId) {
         let actIndex = this.state[secId][rowId]
         Toast.show({text: `${this.state[secId]}`, buttonText:'ok'})
@@ -213,7 +230,16 @@ class ActivityScreen extends Component {
 
     _editRowDetail = (data, secId, rowId, rowMap) => {
         rowMap[`${secId}${rowId}`].props.closeRow()
-        this.editActivityDetail(secId, rowId)
+        if(secId == 'surveys')
+            this.promptToEditActivity(secId, rowId)
+        else
+            this.editFrequency(secId, rowId)
+    }
+
+    editFrequency = (secId, rowId) => {
+        let actIndex = this.state[secId][rowId]
+        let act = this.props.acts[actIndex]
+        Actions.push("frequency", {actIndex})
     }
 
     _renderSectionHeader = (data, secId) => {
@@ -238,22 +264,23 @@ class ActivityScreen extends Component {
 
     _renderRightHiddenRow = (data, secId, rowId, rowMap) => {
         const {user} = this.props
-        if(user.role !== 'clinician') return undefined
+        if(user.role !== 'clinician') return false
         return (
         <View style={{flexDirection:'row', height:63}}>
+            <Button full info style={{height:63, width: 60}} onPress={_ => this._editFrequency(secId, rowId)}>
+                <Icon active name="brush" />
+            </Button>
             <Button full info style={{height:63, width: 60}} onPress={_ => this._editRow(data, secId, rowId, rowMap)}>
             <Icon active name="build" />
             </Button>
             <Button full danger style={{height:63, width: 60}} onPress={_ => this._deleteRow(data, secId, rowId, rowMap)}>
             <Icon active name="trash" />
             </Button>
-            
         </View>
         )
     }
 
     _renderLeftHiddenRow = (data, secId, rowId, rowMap) => {
-        if(secId !== 'surveys') return undefined
         return (
         <View style={{flexDirection:'row', height:63}}>
             <Button full style={{height:63, width: 60}} onPress={_ => this._editRowDetail(data, secId, rowId, rowMap)}>
@@ -299,7 +326,7 @@ class ActivityScreen extends Component {
                 renderRightHiddenRow={this._renderRightHiddenRow}
                 renderSectionHeader={this._renderSectionHeader}
                 leftOpenValue={60}
-                rightOpenValue={-120}
+                rightOpenValue={user.role == 'clinician' ? -120 : 0}
                 enableEmptySections
             />
             </Content>

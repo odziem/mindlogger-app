@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, CheckBox, Button, Row, ListItem } from 'native-base';
 import InputNumber from 'rc-input-number';
 import AudioRecord from '../audio/AudioRecord';
+import DatePicker from 'react-native-datepicker';
 
 export const FormInputItem = ({ input: {...input}, label, stackedLabel, floatingLabel, itemStyle, name, ...props , meta: { touched, error, warning } }) => {
     var hasError= false;
@@ -139,6 +140,17 @@ export const FormInputCheckItem = ({ input, label, style, name, itemStyle, ...pr
       <CheckBox {...input} onPress={() => input.onChange(input.value == false)} checked={input.value == true} />
       <Body><Text style={style}>{label}</Text></Body>
     </ListItem>
+  )
+}
+
+export const FormInputDatePicker = ({input, style, ...props}) => {
+  return (
+    <DatePicker style={style} date={input.value} mode="datetime" 
+    confirmBtnText="Confirm"
+    cancelBtnText="Cancel"
+    minuteInterval={10}
+    {...props}
+    onDateChange={time => input.onChange(time)} />
   )
 }
 
