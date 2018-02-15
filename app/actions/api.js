@@ -55,7 +55,7 @@ export const getActs = () => ({
 export const getAssignedActs = () => ({
     type: types.GET_LIST,
     method: 'GET',
-    path: '/assigned_acts'
+    path: '/users/me/assigned_acts'
 })
 
 export const addAct = (body) => ({

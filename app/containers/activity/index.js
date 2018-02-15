@@ -27,12 +27,13 @@ class ActivityScreen extends Component {
     }
 
     groupActs(actData) {
-        const acts = actData || this.props.acts
+        const {user, assigned_acts, acts} = this.props;
+        let arr = actData || (user.role == 'patient' ? assigned_acts : acts)
         let surveys = []
         let voices = []
         let drawings = []
-        for(var i=0; i<acts.length; i++) {
-            element = acts[i];
+        for(var i=0; i<arr.length; i++) {
+            element = arr[i];
             if(element.type == 'survey') {
                 surveys.push(i)
             } else if(element.type == 'voice') {
@@ -368,6 +369,7 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
   user: (state.core && state.core.auth),
   acts: state.core.acts || [],
+  assigned_acts: state.core.assigned_acts || [],
   act: state.core.act,
 });
 
