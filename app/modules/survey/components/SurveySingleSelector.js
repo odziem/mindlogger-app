@@ -28,7 +28,7 @@ class SurveySingleSelector extends SurveyInputComponent {
               <Text>{row.text}</Text>
               </Body>
               <Right>
-                <Radio selected={idx === this.state.answer} />
+                <Radio selected={idx === this.state.answer} onPress={() => {this.selectAnswer(idx, true)}}/>
               </Right>
             </ListItem>
               )

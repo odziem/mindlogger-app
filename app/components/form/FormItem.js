@@ -39,7 +39,7 @@ export const FormRadioGroup = ({ type,input, name, options, stackedLabel }) => {
     <Text onPress={()=> input.onChange(option.value)}>{option.text}</Text>
     </Body>
     <Right>
-    <Radio selected={option.value === input.value}/>
+    <Radio selected={option.value === input.value} onPress={()=> input.onChange(option.value)}/>
     </Right>
     </Item>
       ))}</View>)
