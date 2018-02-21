@@ -17,3 +17,5 @@ export const SAVE_ANSWER = 'SAVE_ANSWER';
 export const SET_ANSWER = 'SET_ANSWER';
 export const UPDATE_ACTIVITY = 'UPDATE_ACTIVITY';
 export const SET_ACTIVITY = 'SET_ACTIVITY';
+
+export const GET_ASSIGNED_ACTS = 'GET_ASSIGNED_ACTS';

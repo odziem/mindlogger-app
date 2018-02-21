@@ -27,8 +27,8 @@ class ActivityScreen extends Component {
     }
 
     groupActs(actData) {
-        const {user, assigned_acts, acts} = this.props;
-        let arr = actData || (user.role == 'patient' ? assigned_acts : acts)
+        const {user, acts} = this.props;
+        let arr = actData || acts
         let surveys = []
         let voices = []
         let drawings = []
@@ -51,6 +51,11 @@ class ActivityScreen extends Component {
             console.warn("undefined user")
             return
         }
+        this.loadAllActivity()
+    }
+
+    loadAllActivity = (isReload=false) => {
+        const {user, acts, getActs, updateUserLocal, getAssignedActs} = this.props;
         const {role} = user
         this.groupActs()
         if (role == 'clinician') {
@@ -61,7 +66,7 @@ class ActivityScreen extends Component {
                 Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
             })
         } else if (role == 'patient') {
-            if (acts.length == 0) {
+            if (acts.length == 0 || isReload) {
                 getAssignedActs().then(data => {
                     
                 }).catch(err => {
@@ -313,7 +318,7 @@ class ActivityScreen extends Component {
                         <Button transparent onPress={() => this.promptToAddActivity()}>
                             <Icon name="add"/>
                         </Button>
-                    ) : (<Button transparent onPress={() => this.loadAllActivity()}><Icon name="refresh"/></Button>)
+                    ) : (<Button transparent onPress={() => this.loadAllActivity(true)}><Icon name="refresh"/></Button>)
                 }
                 
             </Right>
@@ -369,8 +374,7 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
   user: (state.core && state.core.auth),
   acts: state.core.acts || [],
-  assigned_acts: state.core.assigned_acts || [],
-  act: state.core.act,
+  act: state.core.act || {},
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

@@ -33,6 +33,7 @@ export default store => next => action => {
     return makeRequest(method, path, body, accessToken, isMultipartUpload)
         .then(response => {
             store.dispatch({...action, response, status: 'COMPLETE' });
+            console.log("API success:",path, body, response)
             return Promise.resolve(response);
         })
         .catch(error => {
@@ -72,7 +73,7 @@ const endpointGenerics = (state, path) => {
     let newPath = path;
     console.log(state);
     if (state.core.auth && state.core.auth.id) {
-        newPath = newPath.replace(/user\/me/, `user/${state.core.auth.id}`);
+        newPath = newPath.replace(/users\/me/, `users/${state.core.auth.id}`);
     }
     return newPath;
 }

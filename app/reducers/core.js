@@ -47,6 +47,12 @@ export default function coreReducer(state = initialState, action = {}) {
                     ...state,
                     acts
                 }
+            case types.GET_ASSIGNED_ACTS:
+                acts = action.response.assigned_acts
+                return {
+                    ...state,
+                    acts
+                }
             default:
               return {
                   ...state,
@@ -90,7 +96,7 @@ export default function coreReducer(state = initialState, action = {}) {
                     answer: action.data
                 }
             case types.SET_ACTIVITY:
-                if(action.data.id != state.act.id)
+                if(state.act && action.data.id != state.act.id)
                     return {
                         ...state,
                         act:action.data,
