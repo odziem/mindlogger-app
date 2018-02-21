@@ -12,6 +12,7 @@ export default function coreReducer(state = initialState, action = {}) {
         switch (action.type) {
             case types.SIGN_IN:
             case types.SIGN_UP:
+            case types.UPDATE_USER:
                 return {
                     ...state,
                     auth: action.response.user
