@@ -50,9 +50,9 @@ export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLa
   if(error !== undefined){
     hasError= true;
   }
-  return (<View><Picker mode ="dropdown" iosHeader="Select one" {...inputProps} selectedValue={input.value} onValueChange={input.onChange}>{options.map((option, idx)=>(
+  return (<View><Picker mode ="dropdown" iosHeader="Select one" {...inputProps} selectedValue={input.value} onValueChange={input.onChange} error= {hasError}>{options.map((option, idx)=>(
     <Item key={idx} style={{color:'red'}} label={option.text} value={option.value}/>
-      ))}</Picker>{hasError && <Item error={hasError}><Body></Body><Right><Text>{error}</Text></Right></Item>}</View>)
+      ))}</Picker></View>)
 }
 
 export const FormRadioButtonGroup = ({ type,input, name, options, stackedLabel }) => {
