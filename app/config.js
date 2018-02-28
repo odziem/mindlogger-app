@@ -11,8 +11,8 @@ export default {
     s3: {
         bucket: "cmi-dataapp",
         region: "us-west-1",
-        accessKey: "AKIAJSKJBTHX7RPQNMRQ",
-        secretKey: "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",
+        access_key: "AKIAJSKJBTHX7RPQNMRQ",
+        secret_key: "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",
         successActionStatus: 201
     }
 }

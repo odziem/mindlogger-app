@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Platform} from 'react-native';
 import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Spinner, Toast } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -77,7 +77,9 @@ class VoiceActivityScreen extends Component {
         const {saveAnswer, act} = this.props
         const {output_path, duration} = this.state.answer
         this.toggleSpinner()
-        uploadFileS3(output_path, 'voices/', `${act.title}_VOICE_${moment().format('M-D-YYYY')}.aac`).then(url => {
+        let filename = `${act.title}_VOICE_${moment().format('M-D-YYYY_HHmmss')}`;
+        filename = filename + (Platform.OS == 'android' ? '.mp3' : '.aac')
+        uploadFileS3(output_path, 'voices/', filename).then(url => {
             return saveAnswer(act.id, act.act_data, {duration, output_url: url})
         }).then(res => {
             Actions.pop()

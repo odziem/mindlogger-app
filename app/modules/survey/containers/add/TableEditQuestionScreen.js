@@ -82,7 +82,7 @@ class SurveyTableEditQuestionForm extends Component {
             <Field name="type"
             label="For Columns"
             component ={FormPickerGroup}
-            placeholder = ""
+            placeholder = "Response type"
             options   ={[
                 {text:"Response Type", value:undefined},
                 {text:"Text value",value:"text"},
@@ -103,8 +103,7 @@ SurveyTableEditQuestionReduxForm = reduxForm({
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true
 })(SurveyTableEditQuestionForm)
-const expandFields = (arr, count) => {
-    fields = [...arr]
+const expandFields = (fields, count) => {
     if(fields.length>count) {
         for(var i=0;i<fields.length-count;i++)
         {
@@ -148,7 +147,7 @@ class SurveyTableEditQuestionScreen extends Component {
     }
 
     updateQuestion = (body) => {
-        let {actIndex, questionIdx, acts, user, updateActivity, updateAct} = this.props
+        let {actIndex, questionIdx, acts, user, updateActivity, updateAct, resetForm} = this.props
         if(actIndex < 0) {
             actIndex = acts.length + actIndex
         }
@@ -161,7 +160,8 @@ class SurveyTableEditQuestionScreen extends Component {
         }
         updateActivity(actIndex, act)
 		if(this.isNext) {
-			questionIdx = questionIdx + 1
+            questionIdx = questionIdx + 1
+            resetForm();
 			Actions.replace("survey_table_edit_question",{actIndex, questionIdx})
 		} else {
             if(user.role == 'clinician') {

@@ -46,6 +46,7 @@ class VoiceAddScreen extends Component {
       this.toggleSpinner(false)
       Actions.pop()
     }).catch(err => {
+      console.log(err);
       this.toggleSpinner(false)
       Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
     })

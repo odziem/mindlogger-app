@@ -1,7 +1,13 @@
 import { RNS3 } from 'react-native-aws3';
+import {
+    Platform,
+    PermissionsAndroid,
+  } from 'react-native';
+import { transferUtility } from 'react-native-s3'
 
 import config from './config';
-
+transferUtility.setupWithBasic(config.s3)
+transferUtility.enableProgressSent(false)
 export const prepareAct = (data) => {
     return new Promise((resolve, reject) => {
         if(data.audio_path) {
@@ -19,17 +25,26 @@ export const prepareAct = (data) => {
 }
 
 export const uploadFileS3 = (uri, targetPath, filename) => {
-    return RNS3.put({
-        uri,
-        name: filename,
-        type: 'application/octet-stream'
-    }, {
-        ...config.s3,
-        keyPrefix: targetPath
-    }).then(response => {
-        if (response.status !== 201)
-            throw new Error("Failed to upload image to s3");
-        console.log(response.body);
-        return response.body.postResponse.location
+    let fileExt = filename.split('.').pop()
+    contentType = 'application/octet-stream'
+    const uploadUri = Platform.OS === 'ios' ? uri : 'file://' + uri
+    return new Promise( (resolve, reject) => {
+        return transferUtility.upload({
+            bucket: config.s3.bucket,
+            key: targetPath+filename,
+            file: uploadUri,
+            meta: {
+                "Content-Type": contentType
+            }
+        }).then(res => {
+            transferUtility.subscribe(res.id, (err, task) => {
+                if(task.state == 'completed') {
+                    let filePath = `https://${config.s3.bucket}.s3.amazonaws.com/${task.key}`
+                    resolve(filePath)
+                } else if (task.state == 'failed') {
+                    reject(filePath)
+                }
+            })
+        })
     })
 }

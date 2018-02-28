@@ -12,6 +12,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTPushNotificationManager.h>
+#import "RNS3TransferUtility.h"
 
 @implementation AppDelegate
 
@@ -66,5 +67,9 @@
  {
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
  }
-
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler {
+  [RNS3TransferUtility interceptApplication:application
+        handleEventsForBackgroundURLSession:identifier
+                          completionHandler:completionHandler];
+}
 @end

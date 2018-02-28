@@ -57,7 +57,6 @@ class SurveyAddScreen extends Component {
       let params = { act_data, type:'survey', title}
       return addAct(params)
     }).then( res => {
-      Toast.show({text: mode, buttonText: 'OK'})
       Actions.push(`survey_${mode}_edit_question`,{actIndex:0, questionIdx:0})
     }).catch(err => {
       console.log(err)

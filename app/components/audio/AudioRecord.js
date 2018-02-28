@@ -21,7 +21,7 @@ class AudioRecord extends React.Component {
   constructor() {
     super();
     //let audioPath = AudioUtils.DocumentDirectoryPath + `/${randomString({length:16})}.aac`;
-    const filename = Platform.OS == 'android' ? `${randomString({length:20})}.mp3` : `${randomString({length:20})}.aac`
+    const filename = Platform.OS == 'android' ? `${randomString({length:20})}.mp4` : `${randomString({length:20})}.aac`
     const path = `${AudioUtils.DocumentDirectoryPath}/${filename}` 
     this.filename = Platform.OS == 'android' ? `file://${path}` : filename
     this.output_path = path
