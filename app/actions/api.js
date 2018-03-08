@@ -2,6 +2,7 @@
 import { auth, base} from '../firebase'
 import {saveUserLocal} from './coreActions'
 import * as types from './actionTypes'
+import { Platform } from 'react-native';
 
 export const signUp = (body) => ({
     type: types.SIGN_UP,
@@ -89,6 +90,7 @@ export const saveAnswer = (actId, actData, answerData) => ({
     body: {
         act_id:actId,
         act_data:actData,
-        answer_data:answerData
+        answer_data:answerData,
+        platform: Platform.OS
     }
 })

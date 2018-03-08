@@ -28,7 +28,7 @@ class SurveyTableSummaryScreen extends Component {
     if(rowId === undefined) {
       return (<Separator key={idx} bordered onPress={() => this.onSelect(secId)}><Text>{text}</Text></Separator>)
     } else {
-      const {questions, answers} = this.props.survey
+      const {questions} = this.props.survey
       const question = questions[row.secId]
       if(answer === undefined || answer == null) {
         return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body></Body></ListItem>)
@@ -65,7 +65,7 @@ class SurveyTableSummaryScreen extends Component {
   }
   
   render() {
-    const {act, survey:{questions}, answer:{answers}} = this.props
+    const {act, survey:{questions}, answers} = this.props
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
     let dRows = []
     questions.forEach((question, secId) => {
@@ -103,7 +103,7 @@ class SurveyTableSummaryScreen extends Component {
 export default connect(state => ({
   act: state.core.act,
   survey: state.core.act.act_data,
-  answer:state.core.answer || {}
+  answers: state.core.answer && state.core.answer.answers || [],
 }),
   (dispatch) => bindActionCreators({saveAnswer}, dispatch)
 )(SurveyTableSummaryScreen);
