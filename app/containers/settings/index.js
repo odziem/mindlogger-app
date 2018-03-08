@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Form, Toast, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import {reduxForm, Field} from 'redux-form';
+import {reduxForm, Field, SubmissionError} from 'redux-form';
 
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../components/form/FormItem'
-import {updateUser, updateUserPassword} from '../../actions/api';
+import {updateUser, changePassword} from '../../actions/api';
 import {updateUserLocal} from '../../actions/coreActions';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 
@@ -23,14 +23,10 @@ class UserForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot, user } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Full name" name="first_name" placeholder={user.first_name} style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
-                <Field name="role"
-                component ={FormRadioButtonGroup}
-                options   ={[
-                  {text:"Patient",value:"patient"},
-                  {text:"Clinician",value:"clinician"},
-                ]} />
+                <Field component={FormInputItem} label="First name" name="first_name" placeholder={user.first_name} style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Last name" name="last_name" placeholder={user.last_name} style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Current password" name="current_password" style={styles.text} floatingLabel secureTextEntry={true}/>
+                <Field component={FormInputItem} label="New password" name="new_password" style={styles.text} floatingLabel secureTextEntry={true}/>
                 <Button
                     block
                     style={{marginTop: 40}}
@@ -67,15 +63,16 @@ class SettingScreen extends Component {
     Actions.pop()
   }
 
-  onUserSubmit = ({first_name, password, role}) => {
-    const {user, updateUser, updateUserPassword, updateUserLocal} = this.props
+  onUserSubmit = ({first_name, last_name, current_password, new_password}) => {
+    const {user, updateUser, changePassword, updateUserLocal} = this.props
     let arr = []
-    arr.push(updateUser({first_name: first_name, role}))
-    if(password && password.length>0 && user.password != password) {
-        //arr.push(updateUserPassword(password))
-    }
-    if(role) {
-        updateUserLocal({role})
+    let body = {first_name, last_name}
+    arr.push(updateUser(body))
+    if(new_password && new_password.length>0) {
+      if(current_password == user.password)
+        arr.push(changePassword({new_password, current_password}))
+      else
+        throw new SubmissionError({current_password: "Password does not match!"})
     }
     if(arr.length > 0) {
       Promise.all(arr).then(result => {
@@ -119,7 +116,7 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({updateUser, updateUserPassword, updateUserLocal}, dispatch)
+    ...bindActionCreators({updateUser, changePassword, updateUserLocal}, dispatch)
   };
 }
 

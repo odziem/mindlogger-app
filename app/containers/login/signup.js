@@ -32,7 +32,8 @@ class SignUpForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Full name" name="displayName" style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="First name" name="first_name" style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Last name" name="last_name" style={styles.text} floatingLabel />
                 <Field component={FormInputItem} label="Email" name="email" style={styles.text} floatingLabel />
                 <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
                 <Button
@@ -53,9 +54,9 @@ SignUpReduxForm = reduxForm({
 })(SignUpForm)
 
 class SignUp extends Component { // eslint-disable-line
-    onSignUp = ({email, password, displayName}) => {
+    onSignUp = ({email, password, first_name, last_name}) => {
         const {signUp, updateUserProfile} = this.props
-        return signUp({first_name:displayName, email, password, role: 'patient', newsletter: true}).then(user => {
+        return signUp({first_name, last_name, email, password, role: 'patient', newsletter: true}).then(user => {
             Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(error => {
