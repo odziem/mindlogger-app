@@ -58,14 +58,14 @@ class ActivityScreen extends Component {
         const {user, acts, getActs, updateUserLocal, getAssignedActs} = this.props;
         const {role} = user
         this.groupActs()
-        if (role == 'clinician') {
+        if (role == 'admin') {
             getActs().then(data => {
                 
             }).catch(err => {
                 console.log(err)
                 Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
             })
-        } else if (role == 'patient') {
+        } else if (role == 'user') {
             if (acts.length == 0 || isReload) {
                 getAssignedActs().then(data => {
                     
