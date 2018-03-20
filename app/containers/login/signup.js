@@ -56,7 +56,7 @@ SignUpReduxForm = reduxForm({
 class SignUp extends Component { // eslint-disable-line
     onSignUp = ({email, password, first_name, last_name}) => {
         const {signUp, updateUserProfile} = this.props
-        return signUp({first_name, last_name, email, password, role: 'patient', newsletter: true}).then(user => {
+        return signUp({first_name, last_name, email, password, role: 'user', newsletter: true}).then(user => {
             Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(error => {

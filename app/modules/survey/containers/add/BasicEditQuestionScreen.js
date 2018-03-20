@@ -29,7 +29,11 @@ class SurveyEditQuestionForm extends Component {
     renderRows = ({fields, meta: {error, submitFailed}}) => {
       return (<View padder>
           {fields.map((member,index) => (
-            <Row key={index}><Field itemStyle={{flex:1}} inlineLabel label={`Choice ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/><Button transparent onPress={() => fields.remove(index) }><Icon name="trash" style={{color: 'red'}}/></Button></Row>
+            <Row key={index}>
+                <Field itemStyle={{flex:1}} inlineLabel label={`Choice ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/>
+                {/* <Field itemStyle={{flex:1}} inlineLabel label={`Score ${index+1}`} name={`${member}.value`} type="number" component={FormInputItem}/> */}
+                <Button transparent onPress={() => fields.remove(index) }><Icon name="trash" style={{color: 'red'}}/></Button>
+            </Row>
           ))}
           <Row padder><Right><Button onPress={()=> fields.push({text:'', value:fields.length})}><Text>Add choice</Text></Button></Right></Row>
         </View>)
@@ -153,7 +157,7 @@ class SurveyBasicEditQuestionScreen extends Component {
 			questionIdx = questionIdx + 1
 			Actions.replace("survey_basic_edit_question",{actIndex, questionIdx})
 		} else {
-            if(user.role == 'clinician') {
+            if(user.role == 'admin') {
                 updateAct(actIndex, act).then(res => {
                     Actions.pop()
                 }).catch(err => {

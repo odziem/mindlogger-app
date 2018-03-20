@@ -164,7 +164,7 @@ class SurveyTableEditQuestionScreen extends Component {
             resetForm();
 			Actions.replace("survey_table_edit_question",{actIndex, questionIdx})
 		} else {
-            if(user.role == 'clinician') {
+            if(user.role == 'admin') {
                 updateAct(actIndex, act).then(res => {
                     Actions.pop()
                 }).catch(err => {

@@ -35,7 +35,7 @@ class SurveyAddScreen extends Component {
     let survey = {...this.state.survey, ...body}
     let act = acts[actIndex]
     let {title, ...data} = survey
-    if(user.role == 'clinician') {
+    if(user.role == 'admin') {
       return prepareAct(data).then( act_data => {
         let params = { act_data, type:'survey', title}
         return updateAct(actIndex, {id: act.id, title, act_data}).then(result => {

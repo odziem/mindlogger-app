@@ -270,7 +270,7 @@ class ActivityScreen extends Component {
 
     _renderRightHiddenRow = (data, secId, rowId, rowMap) => {
         const {user} = this.props
-        if(user.role !== 'clinician') return false
+        if(user.role != 'admin') return false
         return (
         <View style={{flexDirection:'row', height:63}}>
             <Button full info style={{height:63, width: 60}} onPress={_ => this._editFrequency(secId, rowId)}>
@@ -314,7 +314,7 @@ class ActivityScreen extends Component {
             </Body>
             <Right>
                 {
-                    user.role == 'clinician' ? (
+                    user.role == 'admin' ? (
                         <Button transparent onPress={() => this.promptToAddActivity()}>
                             <Icon name="add"/>
                         </Button>
@@ -332,7 +332,7 @@ class ActivityScreen extends Component {
                 renderRightHiddenRow={this._renderRightHiddenRow}
                 renderSectionHeader={this._renderSectionHeader}
                 leftOpenValue={60}
-                rightOpenValue={user.role == 'clinician' ? -120 : 0}
+                rightOpenValue={user.role == 'admin' ? -120 : 0}
                 enableEmptySections
             />
             </Content>
