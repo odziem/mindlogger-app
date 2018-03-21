@@ -102,7 +102,7 @@ class SurveyEditQuestionForm extends Component {
               {text:"Image", value:"image_sel"}
             ]} validate={required} />
             { this.renderExtraFields(question_type) }
-            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onFile={this.onSelectImage}/> }
           </Form>)
     }
 }

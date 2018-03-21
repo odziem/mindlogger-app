@@ -88,8 +88,8 @@ const mapDispatchToProps = (dispatch) => ({
         }
         return dispatch(signIn(body)).then(res => {
             console.log(res)
-            //return true
-            return auth.signInAnonymously()
+            return true
+            //return auth.signInAnonymously()
         }).then(res => {
             Actions.push('activity')
         }).catch(err => {

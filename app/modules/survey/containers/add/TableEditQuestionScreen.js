@@ -92,7 +92,7 @@ class SurveyTableEditQuestionForm extends Component {
                 {text:"Image selection", value: "image_sel"},
             ]} validate={required}/>
             <FieldArray name="cols" label="Col" count={this.props.cols_count} component={ type == 'image_sel' ? this.renderImageRows : this.renderRows} value={cols}/>
-            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onFile={this.onSelectImage}/> }
         </Form>)
     }
 }

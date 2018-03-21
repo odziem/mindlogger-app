@@ -78,7 +78,7 @@ class DrawingAddForm extends Component {
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
 
             <Field name="image_url" type="text" stackedLabel label="Fill Image" component={this.renderImageField} />
-            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onFile={this.onSelectImage}/> }
             <Field name="timer"
             label="Timer"
             component ={FormPickerGroup}

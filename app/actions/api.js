@@ -94,3 +94,11 @@ export const saveAnswer = (actId, actData, answerData) => ({
         platform: Platform.OS
     }
 })
+
+// Files
+
+export const getFiles = (path) => ({
+    type: types.GET_LIST,
+    method: 'GET',
+    path: `/files?path=${path}`
+})
