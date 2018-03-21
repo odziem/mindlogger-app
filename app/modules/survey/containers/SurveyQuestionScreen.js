@@ -35,9 +35,19 @@ class SurveyQuestionScreen extends Component {
   }
 
   nextQuestion = () => {
-    let {questionIndex, survey} = this.props
-    let {questions} = survey
-    questionIndex = questionIndex + 1
+    let {questionIndex, survey, answers} = this.props;
+    let {questions} = survey;
+    let condition_question_index, condition_choice;
+    // Skip question does not match condition
+    do {
+      questionIndex = questionIndex + 1
+      if (questionIndex<questions.length) {
+        condition_question_index = questions[questionIndex].condition_question_index;
+        condition_choice = questions[questionIndex].condition_choice;
+      } else {
+        break;
+      }
+    }while(condition_question_index>-1 && answers[condition_question_index].result != condition_choice);
 
     if(questionIndex<questions.length) {
       Actions.replace("survey_question", { questionIndex:questionIndex})
