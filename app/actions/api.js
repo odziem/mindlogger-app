@@ -1,5 +1,4 @@
 
-import { auth, base} from '../firebase'
 import {saveUserLocal} from './coreActions'
 import * as types from './actionTypes'
 import { Platform } from 'react-native';

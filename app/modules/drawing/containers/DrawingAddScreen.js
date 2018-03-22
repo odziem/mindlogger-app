@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import { RNS3 } from 'react-native-aws3';
 
 import DrawingAddForm from '../components/DrawingAddForm';
-import {fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
+
 import { prepareAct } from '../../../helper';
 import { addAct, updateAct } from '../../../actions/api';
 

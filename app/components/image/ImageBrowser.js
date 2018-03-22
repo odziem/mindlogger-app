@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import { submit } from 'redux-form'
 import { Image } from 'react-native'
 import {Row, Col, Content, Button, Text,List, ListItem, Thumbnail, Left, Right, Icon, Body, Item} from 'native-base'
-import {base, storageRef} from '../../firebase'
 import config from '../../config';
 import { getFiles } from '../../actions/api';
 
