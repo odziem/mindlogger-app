@@ -16,13 +16,15 @@ import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 import SurveyImageSelector from '../components/SurveyImageSelector'
 import SurveyTableInput from '../components/SurveyTableInput'
+import DrawingBoard from '../../drawing/components/DrawingBoard';
+import AudioRecord from '../../../components/audio/AudioRecord';
 
 class SurveyQuestionScreen extends Component {
   constructor(props) {
     super(props)
   }
 
-  onInputAnswer = (result, data, final=false) => {
+  onInputAnswer = (result, data=undefined, final=false) => {
     let {questionIndex, survey:{questions}, answers, setAnswer} = this.props
     let answer = {
       result,
@@ -69,65 +71,95 @@ class SurveyQuestionScreen extends Component {
     }
   }
 
-  renderQuestion() {
-    const { questionIndex, survey, answers} = this.props
-    let question = survey.questions[questionIndex]
-    let answer = answers[questionIndex] && answers[questionIndex].result
-    if(survey.mode == 'basic') {
-      switch(question.type) {
-        case 'text':
-          return (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />)
-        case 'bool':
-          return (<SurveyBoolSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-        case 'single_sel':
-          return (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-        case 'multi_sel':
-          return (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-        case 'image_sel':
-          return (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
-      }
-    } else {
-      return (<SurveyTableInput onSelect={this.onInputAnswer} data={{question, answer}}/>)
-    }
-    
-    
-    return (
-      <View>
-      </View>
-      )
-
-
+  renderHeader() {
+    const { act } = this.props
+    return (<Header>
+      <Left>
+        <Button transparent onPress={() => this.prevQuestion()}>
+        <Icon name="arrow-back" />
+        </Button>
+      </Left>
+      <Body style={{flex:2}}>
+          <Title>{act.title}</Title>
+      </Body>
+      <Right>
+        <Button transparent onPress={() => this.nextQuestion()}>
+        <Icon name="arrow-forward" />
+        </Button>
+      </Right>
+    </Header>);
   }
 
-  render() {
-    const { act, questionIndex, survey } = this.props
+  renderContent() {
+    const { questionIndex, survey, answers} = this.props;
+    let question = survey.questions[questionIndex];
+    let answer = answers[questionIndex] && answers[questionIndex].result;
     const length = survey.questions.length
     const index = questionIndex + 1
     const progressValue = index/length
-    return (
-      <Container>
-      <Header>
-        <Left>
-          <Button transparent onPress={() => this.prevQuestion()}>
-          <Icon name="arrow-back" />
-          </Button>
-        </Left>
-        <Body style={{flex:2}}>
-            <Title>{act.title}</Title>
-        </Body>
-        <Right>
-          <Button transparent onPress={() => this.nextQuestion()}>
-          <Icon name="arrow-forward" />
-          </Button>
-        </Right>
-      </Header>
-      <Content padder style={baseTheme.content}>
-        { this.renderQuestion()}
+
+    let scroll = true;
+    let comp = (<View></View>);
+    
+    if(survey.mode == 'basic') {
+      switch(question.type) {
+        case 'text':
+          comp = (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />);
+          break;
+        case 'bool':
+          comp = (<SurveyBoolSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
+          break;
+        case 'single_sel':
+          comp = (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
+          break;
+        case 'multi_sel':
+          comp = (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
+          break;
+        case 'image_sel':
+          comp = (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
+          break;
+        case 'drawing':
+          scroll = false;
+          comp = (
+          <View>
+            <Text>{question.title}</Text>
+            <DrawingBoard source={question.image_url && {uri: question.image_url}} ref={board => {this.board = board}} autoStart lines={answer.lines}/>
+            <View><Left><Button onPress={this.saveDrawing}><Text>Save</Text></Button></Left>
+            <Right><Button onPress={this.resetDrawing}><Text>Reset</Text></Button></Right></View>
+          </View>);
+          break;
+        case 'audio':
+          comp = (
+            <View>
+              <Text>{question.title}</Text>
+              <AudioRecord onRecordFile={(filePath)=>this.onInputAnswer(filePath)} path={answer}/>
+            </View>
+          );
+          break;
+      }
+    } else {
+      comp = (<SurveyTableInput onSelect={this.onInputAnswer} data={{question, answer}}/>);
+    }
+
+    return (<Content padder style={baseTheme.content} scrollEnabled={scroll}>
+      {comp}
       <View padder style={{marginTop: 20}}>
         <Progress.Bar progress={progressValue} width={null} height={20}/>
         <Text style={{textAlign:'center'}}>{`${index}/${length}`}</Text>
       </View>
-      </Content>
+      </Content>);
+  }
+
+  saveDrawing = () => {
+    let answer = this.board.save();
+    this.onInputAnswer(answer, null, true)
+  }
+
+  render() {
+    return (
+      <Container>
+        { this.renderHeader() }
+        { this.renderContent() }
       </Container>
     )
   }

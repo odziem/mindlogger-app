@@ -30,8 +30,9 @@ class SurveyBasicSummaryScreen extends Component {
     });
     this.setState({ indexArray });
   }
-  onSelect(questionIndex) {
-    Actions.replace("survey_question", { questionIndex })
+  onSelect(index) {
+    const questionIndex = this.state.indexArray[index];
+    Actions.replace("survey_question", { questionIndex });
   }
   onDone() {
     const { saveAnswer, act, answer, survey } = this.props
@@ -92,6 +93,12 @@ class SurveyBasicSummaryScreen extends Component {
           break;
         case 'image_sel':
           rowItem = (<Thumbnail square source={{ uri: question.images[answer].image_url }} />)
+          break;
+        case 'drawing':
+          rowItem = (<Text></Text>)
+          break;
+        case 'audio':
+          rowItem = (<Text></Text>)
           break;
         default:
           rowItem = <Text>{answer}</Text>
