@@ -35,9 +35,21 @@ class SurveyQuestionScreen extends Component {
     if(final)
       setTimeout(() => { this.nextQuestion() }, 500)
   }
-
+  saveChange = () => {
+    let {questionIndex, survey} = this.props
+    let answer;
+    if(survey.mode == 'basic') {
+      switch (survey.questions[questionIndex].type) {
+        case 'drawing':
+          answer = this.board.save();
+          this.onInputAnswer(answer, null, false);
+          break;
+      }
+    }
+  }
   nextQuestion = () => {
-    let {questionIndex, survey, answers} = this.props;
+    this.saveChange();
+    let {questionIndex, survey, answers, indexMap} = this.props;
     let {questions} = survey;
     let condition_question_index, condition_choice;
     // Skip question does not match condition
@@ -52,7 +64,7 @@ class SurveyQuestionScreen extends Component {
     }while(condition_question_index>-1 && answers[condition_question_index].result != condition_choice);
 
     if(questionIndex<questions.length) {
-      Actions.replace("survey_question", { questionIndex:questionIndex})
+      Actions.replace("survey_question", {questionIndex, indexMap})
     } else {
       Actions.replace("survey_"+ survey.mode + "_summary")
     }
@@ -60,9 +72,16 @@ class SurveyQuestionScreen extends Component {
   }
 
   prevQuestion = () => {
-    let {questionIndex, survey} = this.props
-    let {questions, answers} = survey
-    questionIndex = questionIndex - 1
+    this.saveChange();
+    let {questionIndex, survey:{questions}} = this.props
+    let {answers} = this.props
+    for(questionIndex=questionIndex-1; questionIndex>=0; questionIndex--)
+    {
+      let { condition_question_index, condition_choice } = questions[questionIndex];
+      if (condition_question_index == undefined || condition_question_index == -1 || (answers[condition_question_index] && answers[condition_question_index].result == condition_choice)) {
+        break;
+      }
+    }
 
     if(questionIndex>=0) {
       Actions.replace("survey_question", { questionIndex:questionIndex })
@@ -123,7 +142,7 @@ class SurveyQuestionScreen extends Component {
           comp = (
           <View>
             <Text>{question.title}</Text>
-            <DrawingBoard source={question.image_url && {uri: question.image_url}} ref={board => {this.board = board}} autoStart lines={answer.lines}/>
+            <DrawingBoard source={question.image_url && {uri: question.image_url}} ref={board => {this.board = board}} autoStart lines={answer && answer.lines}/>
             <View><Left><Button onPress={this.saveDrawing}><Text>Save</Text></Button></Left>
             <Right><Button onPress={this.resetDrawing}><Text>Reset</Text></Button></Right></View>
           </View>);
@@ -152,7 +171,7 @@ class SurveyQuestionScreen extends Component {
 
   saveDrawing = () => {
     let answer = this.board.save();
-    this.onInputAnswer(answer, null, true)
+    this.onInputAnswer(answer, null, true);
   }
 
   render() {
