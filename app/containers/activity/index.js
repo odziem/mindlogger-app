@@ -15,6 +15,8 @@ import { openDrawer, closeDrawer } from '../../actions/drawer';
 import { updateUserLocal, setActivity, setAnswer } from '../../actions/coreActions';
 
 import { getActs, getAssignedActs,deleteAct } from '../../actions/api';
+import {PushNotificationIOS, Platform} from 'react-native';
+import PushNotification from 'react-native-push-notification';
 
 import styles from './styles';
 
@@ -52,6 +54,35 @@ class ActivityScreen extends Component {
             return
         }
         this.loadAllActivity()
+        if (Platform.OS == 'ios') {
+            PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
+        } else {
+            PushNotification.registerNotificationActions(['Take', 'Cancel'])
+        }
+    }
+    componentWillUnmount() {
+        PushNotificationIOS.removeEventListener('localNotification', this.onNotificationIOS);
+    }
+
+    onNotificationIOS = (notification) => {
+        let {userInfo:{act_id}} = notification;
+        this.startActivityFromId(act_id)
+    }
+
+    onNotificationAndroid = (notification) => {
+        let act_id = floor(parseInt(notification.id)/10)
+        this.startActivityFromId(act_id)
+    }
+
+    startActivityFromId(act_id){
+        const {user, acts} = this.props;
+        let act;
+        acts.forEach(element => {
+            if (element.id == act_id) {
+                act = element;
+            }
+        });
+        this.startActivity(act);
     }
 
     loadAllActivity = (isReload=false) => {
@@ -165,36 +196,32 @@ class ActivityScreen extends Component {
         })
     }
 
-    startActivity(secId, rowId) {
+    startActivity(act) {
         const {setActivity} = this.props
-        let actIndex = this.state[secId][rowId]
-        let act = this.props.acts[actIndex]
-        if(secId === 'surveys') {
-            const {setSurvey} = this.props
+        
+        if(act.type === 'survey') {
             const survey = act.act_data
             setActivity(act)
             if(survey.audio_url)
                 this.playInstruction(survey)
             if(survey.mode == 'table') {
-                if(survey.accordion){
+                if(survey.accordion && survey.accordion != "false"){
                     Actions.survey_table_accordion()
                 } else {
                     Actions.survey_question({ questionIndex:0})
                 }
             } else {
-                if(survey.accordion){
+                if(survey.accordion && survey.accordion != "false"){
                     Actions.survey_accordion()
                 } else {
                     Actions.survey_question({ questionIndex:0})
                 }
             }
-        } else if(secId === 'voices') {
-            const {setVoice} = this.props
+        } else if(act.type == 'voice') {
             let voice = act
             setActivity(act)
             Actions.push("voice_activity")
-        } else if(secId === 'drawings') {
-            const {setDrawing} = this.props
+        } else if(act.type == 'drawing') {
             let drawing = act.act_data
             if(drawing.audio_url)
                 this.playInstruction(drawing)
@@ -221,7 +248,9 @@ class ActivityScreen extends Component {
     }
 
     _selectRow = (data, secId, rowId) => {
-        this.startActivity(secId, rowId)
+        let actIndex = this.state[secId][rowId]
+        let act = this.props.acts[actIndex]
+        this.startActivity(act)
     }
 
     _editRow = (data, secId, rowId, rowMap) => {

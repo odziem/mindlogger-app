@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Spinner, Toast, View } from 'native-base';
 import {PushNotificationIOS, Platform} from 'react-native';
-import PushNotification from 'react-native-push-notification'
+import PushNotification from 'react-native-push-notification';
 import { Actions } from 'react-native-router-flux';
 
 import { FormInputDatePicker } from '../../components/form/FormItem';
