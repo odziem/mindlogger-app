@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import * as Progress from 'react-native-progress';
+
 import ImagePicker from 'react-native-image-picker';
+import { Accelerometer } from 'react-native-sensors';
 
 import baseTheme from '../../../theme';
 import { saveAnswer } from '../../../actions/api';
@@ -232,6 +234,25 @@ class SurveyQuestionScreen extends Component {
     uploadFileS3(uri, 'uploads/', filename).then(url => {
       this.onInputAnswer(url, null, true);
     })
+  }
+
+  recordAcc = () => {
+    this.accObservable = null;
+    this.accData=[];
+    let acc = new Accelerometer().then(observable => {
+      this.accObservable = observable;
+      this.accObservable
+        .map(({x,y,z}) => x+y+z)
+        .filter(speed => speed > 20)
+        .subscribe(speed => this.accData.push({speed, time: Date.now()}))
+    })
+  }
+
+  saveAcc = () => {
+    if(!this.accObservable) return;
+    this.accObservable.stop();
+    this.onInputAnswer(this.accData, null, true);
+    this.accObservable = null;
   }
 
   render() {
