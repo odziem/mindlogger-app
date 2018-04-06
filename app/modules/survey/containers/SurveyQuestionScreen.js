@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body } from 'native-base';
+import {StyleSheet, StatusBar, Image} from 'react-native';
+import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Thumbnail, Item } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import * as Progress from 'react-native-progress';
+import ImagePicker from 'react-native-image-picker';
 
-import baseTheme from '../../../theme'
+import baseTheme from '../../../theme';
 import { saveAnswer } from '../../../actions/api';
 import { setAnswer } from '../../../actions/coreActions';
 
@@ -18,10 +19,17 @@ import SurveyImageSelector from '../components/SurveyImageSelector'
 import SurveyTableInput from '../components/SurveyTableInput'
 import DrawingBoard from '../../drawing/components/DrawingBoard';
 import AudioRecord from '../../../components/audio/AudioRecord';
+import { uploadFileS3 } from '../../../helper';
+
+const rowStyle=StyleSheet.create({flexDirection:'row', justifyContent:'space-around'});
 
 class SurveyQuestionScreen extends Component {
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+    this.setState({});
   }
 
   onInputAnswer = (result, data=undefined, final=false) => {
@@ -143,8 +151,10 @@ class SurveyQuestionScreen extends Component {
           <View>
             <Text>{question.title}</Text>
             <DrawingBoard source={question.image_url && {uri: question.image_url}} ref={board => {this.board = board}} autoStart lines={answer && answer.lines}/>
-            <View><Left><Button onPress={this.saveDrawing}><Text>Save</Text></Button></Left>
-            <Right><Button onPress={this.resetDrawing}><Text>Reset</Text></Button></Right></View>
+            <View style={rowStyle}>
+              <Left><Button onPress={this.saveDrawing}><Text>Save</Text></Button></Left>
+              <Right><Button onPress={this.resetDrawing}><Text>Reset</Text></Button></Right>
+            </View>
           </View>);
           break;
         case 'audio':
@@ -154,6 +164,33 @@ class SurveyQuestionScreen extends Component {
               <AudioRecord onRecordFile={(filePath)=>this.onInputAnswer(filePath)} path={answer}/>
             </View>
           );
+          break;
+        case 'camera':
+          comp = (<View>
+            <Text>{question.title}</Text>
+            <View>
+                <Image source={this.state.pic_source} style={{width: null, height: 200, flex: 1, margin: 20}}/>
+            </View>
+            <View style={rowStyle}>
+              <Button onPress={this.pickPhoto}><Text>Select</Text></Button>
+              <Button onPress={this.savePhoto} disabled={!this.state.pic_source}><Text>Save</Text></Button>
+            </View>
+          </View>)
+          break;
+        case 'capture_acc':
+          comp = (<View>
+            <Text>{question.title}</Text>
+            <View style={rowStyle}>
+              <Left><Button onPress={this.recordAcc}><Text>Record</Text></Button></Left>
+              <Right><Button onPress={this.saveAcc}><Text>Save</Text></Button></Right>
+            </View>
+          </View>)
+          break;
+        case 'image_sort':
+          comp = (<View>
+            <Text>{question.title}</Text>
+            
+            </View>)
           break;
       }
     } else {
@@ -172,6 +209,29 @@ class SurveyQuestionScreen extends Component {
   saveDrawing = () => {
     let answer = this.board.save();
     this.onInputAnswer(answer, null, true);
+  }
+
+  pickPhoto = () => {
+    let options = {title: 'Select Image'}
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('Image Picker error: ', resonse.error);
+      } else {
+        let pic_source = {uri: response.uri, filename: response.fileName};
+        this.setState({pic_source})
+      }
+    })
+  }
+
+  savePhoto = () => {
+    let {uri, filename} = this.state.pic_source;
+    let timestamp = Math.floor(Date.now());
+    filename = `${timestamp}_${randomString({length:20})}_`+filename;
+    uploadFileS3(uri, 'uploads/', filename).then(url => {
+      this.onInputAnswer(url, null, true);
+    })
   }
 
   render() {

@@ -3,6 +3,7 @@ package lab.childmindinstitute.data;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
 import com.mybigday.rns3.RNS3Package;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.horcrux.svg.SvgPackage;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ImagePickerPackage(),
             new RNS3Package(),
             new ReactNativePushNotificationPackage(),
             new SvgPackage(),
