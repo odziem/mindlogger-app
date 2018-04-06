@@ -8,6 +8,7 @@ import * as Progress from 'react-native-progress';
 
 import ImagePicker from 'react-native-image-picker';
 import { Accelerometer } from 'react-native-sensors';
+import SortableGrid from 'react-native-sortable-grid';
 
 import baseTheme from '../../../theme';
 import { saveAnswer } from '../../../actions/api';
@@ -23,8 +24,10 @@ import DrawingBoard from '../../drawing/components/DrawingBoard';
 import AudioRecord from '../../../components/audio/AudioRecord';
 import { uploadFileS3 } from '../../../helper';
 
-const rowStyle=StyleSheet.create({flexDirection:'row', justifyContent:'space-around'});
-
+const styles=StyleSheet.create({
+  row: {flexDirection:'row', justifyContent:'space-around'},
+  block: {flex: 1, margin: 8, borderRadius: 8, justifyContent: 'center', alignItems: 'center'}
+});
 class SurveyQuestionScreen extends Component {
   constructor(props) {
     super(props)
@@ -153,7 +156,7 @@ class SurveyQuestionScreen extends Component {
           <View>
             <Text>{question.title}</Text>
             <DrawingBoard source={question.image_url && {uri: question.image_url}} ref={board => {this.board = board}} autoStart lines={answer && answer.lines}/>
-            <View style={rowStyle}>
+            <View style={styles.row}>
               <Left><Button onPress={this.saveDrawing}><Text>Save</Text></Button></Left>
               <Right><Button onPress={this.resetDrawing}><Text>Reset</Text></Button></Right>
             </View>
@@ -173,7 +176,7 @@ class SurveyQuestionScreen extends Component {
             <View>
                 <Image source={this.state.pic_source} style={{width: null, height: 200, flex: 1, margin: 20}}/>
             </View>
-            <View style={rowStyle}>
+            <View style={styles.row}>
               <Button onPress={this.pickPhoto}><Text>Select</Text></Button>
               <Button onPress={this.savePhoto} disabled={!this.state.pic_source}><Text>Save</Text></Button>
             </View>
@@ -182,7 +185,7 @@ class SurveyQuestionScreen extends Component {
         case 'capture_acc':
           comp = (<View>
             <Text>{question.title}</Text>
-            <View style={rowStyle}>
+            <View style={styles.row}>
               <Left><Button onPress={this.recordAcc}><Text>Record</Text></Button></Left>
               <Right><Button onPress={this.saveAcc}><Text>Save</Text></Button></Right>
             </View>
@@ -191,7 +194,10 @@ class SurveyQuestionScreen extends Component {
         case 'image_sort':
           comp = (<View>
             <Text>{question.title}</Text>
-            
+            {this.renderImageSort(question)}
+            <View style={styles.row}>
+              <Right><Button onPress={this.saveAcc}><Text>Save</Text></Button></Right>
+            </View>
             </View>)
           break;
       }
@@ -253,6 +259,18 @@ class SurveyQuestionScreen extends Component {
     this.accObservable.stop();
     this.onInputAnswer(this.accData, null, true);
     this.accObservable = null;
+  }
+
+  renderImageSort(question) {
+    let {images} = question;
+    return (
+      <SortableGrid>
+        {
+          images.map((item, index) => <Thumbnail key={index} style={styles.block} source={{uri: item.image_url}}/>)
+        }
+        
+      </SortableGrid>
+    )
   }
 
   render() {
